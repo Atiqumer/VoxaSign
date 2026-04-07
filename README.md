@@ -1,4 +1,4 @@
-<h1 align="center">🤟 SignSpeak — Gesture Studio</h1>
+<h1 align="center">🤟 Voxasign </h1>
 <h3 align="center">AI-Powered Real-Time Sign Language → Text → Speech</h3>
 
 <p align="center">
@@ -14,21 +14,9 @@
   Real-time gesture translation directly in your browser — no servers, no latency.
 </p>
 
----
-
-## 🎥 Studio Preview
-
-<p align="center">
-  <img src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif" width="650"/>
-</p>
-
-> ⚠️ Replace this GIF with your actual project demo for maximum impact
-
----
-
 ## 📌 Project Overview
 
-**SignSpeak** is a high-performance **Gesture Studio SaaS Dashboard** built to empower the Deaf and Hard of Hearing (DHH) community.
+**VoxaSign** is a high-performance **Gesture Studio SaaS Dashboard** built to empower the Deaf and Hard of Hearing (DHH) community.
 
 It evolved from a **Python-based deep learning model** into a **fully browser-based Edge-AI system**, delivering:
 
@@ -48,7 +36,7 @@ Yet, communication barriers still exist in:
 - 🎓 Education  
 - 🏦 Banking  
 
-💡 **SignSpeak solves this** with a **hardware-agnostic, browser-based AI translator**.
+💡 **VoxaSign solves this** with a **hardware-agnostic, browser-based AI translator**.
 
 ---
 
@@ -88,7 +76,7 @@ Camera → Hand Tracking → Landmark Processing → DNN → Text → Speech
 ## 📂 Project Structure
 
 ```
-SignSpeakAI/
+VoxaSignAI/
 ├── web_model/
 │   ├── model.json
 │   └── group1-shard1of1.bin
@@ -108,7 +96,7 @@ SignSpeakAI/
 
 ```bash
 git clone https://github.com/Atiqumer/SignSpeakAI.git
-cd SignSpeakAI
+cd VoxaSign
 ```
 
 ### 2️⃣ Run Locally
@@ -156,42 +144,3 @@ python -m http.server 8000
 - [ ] 🌍 Multi-language support  
 
 ---
-
-## 🤝 Contributing
-
-```
-Fork → Clone → Create Branch → Commit → Push → Pull Request
-```
-
----
-
-## ⭐ Support
-
-<p align="center">
-  <b>If you like this project, give it a ⭐</b><br><br>
-  <img src="https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy.gif" width="200"/>
-</p>
-
----
-
-## 👨‍💻 Author
-
-**Atiq Umer**
-
-<p align="center">
-  <a href="https://github.com/Atiqumer">
-    <img src="https://img.shields.io/badge/GitHub-Profile-black?style=for-the-badge&logo=github">
-  </a>
-</p>
-
----
-
-## 📄 License
-
-MIT License © 2026
-
----
-
-<p align="center">
-  <b>Built with ♥ for Accessibility & Inclusive AI</b>
-</p>
