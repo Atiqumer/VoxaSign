@@ -8,171 +8,207 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.mjs" type="module"></script>
     <style>
-        :root {
-            --bg-dark: #020617;
-            --card-glass: rgba(15, 23, 42, 0.8);
-            --electric-blue: #38bdf8;
-            --blue-glow: rgba(56, 189, 248, 0.2);
-            --text-bright: #f1f5f9;
-            --text-muted: #94a3b8;
-            --border-glass: rgba(255, 255, 255, 0.1);
-            --danger: #ef4444;
+    :root {
+        --bg-dark: #020617;
+        --card-glass: rgba(15, 23, 42, 0.8);
+        --electric-blue: #38bdf8;
+        --blue-glow: rgba(56, 189, 248, 0.2);
+        --text-bright: #f1f5f9;
+        --text-muted: #94a3b8;
+        --border-glass: rgba(255, 255, 255, 0.1);
+        --danger: #ef4444;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+        font-family: 'Nunito', sans-serif;
+        background: var(--bg-dark);
+        background-image: radial-gradient(at 0% 0%, hsla(217,100%,12%,1) 0, transparent 50%), 
+                          radial-gradient(at 100% 100%, hsla(200,100%,10%,1) 0, transparent 50%);
+        min-height: 100vh;
+        color: var(--text-bright);
+        display: flex;
+        flex-direction: column;
+    }
+
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 20px;
+        background: var(--card-glass);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border-glass);
+    }
+
+    .logo-box { display: flex; align-items: center; gap: 8px; }
+    .logo-name { font-family: 'Lora', serif; font-size: 1.3rem; font-weight: 600; }
+    .logo-name span { color: var(--electric-blue); }
+
+    .btn-ref {
+        background: var(--blue-glow);
+        border: 1px solid var(--electric-blue);
+        color: var(--electric-blue);
+        padding: 8px 15px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    main {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 1fr 380px; /* Desktop Layout */
+        gap: 20px;
+        padding: 20px;
+        max-width: 1500px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .glass-panel {
+        background: var(--card-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 24px;
+        padding: 20px;
+        backdrop-filter: blur(20px);
+    }
+
+    .source-toggle {
+        display: flex;
+        background: rgba(0,0,0,0.3);
+        padding: 5px;
+        border-radius: 14px;
+        margin-bottom: 15px;
+        border: 1px solid var(--border-glass);
+    }
+
+    .toggle-btn {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        font-weight: 700;
+        cursor: pointer;
+        border-radius: 10px;
+        font-size: 14px;
+        display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+
+    .toggle-btn.active {
+        background: var(--electric-blue);
+        color: var(--bg-dark);
+        box-shadow: 0 4px 12px var(--blue-glow);
+    }
+
+    .workspace-card {
+        position: relative;
+        height: 400px; /* Reduced for better mobile fit */
+        background: #000;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid var(--border-glass);
+    }
+
+    #webcam, #output_canvas, #image_canvas {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%; object-fit: cover;
+    }
+
+    #placeholder {
+        position: absolute; inset: 0;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        z-index: 5; background: var(--bg-dark);
+        text-align: center; padding: 20px;
+    }
+
+    #liveView, #uploadView { display: none; width: 100%; height: 100%; position: relative; }
+    #liveView.visible, #uploadView.visible { display: block; }
+
+    .drop-zone {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        height: 100%; cursor: pointer; border: 2px dashed var(--border-glass); margin: 15px; border-radius: 15px;
+    }
+
+    .floating-actions {
+        position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+        display: none; gap: 10px; background: rgba(15, 23, 42, 0.9);
+        padding: 8px 16px; border-radius: 50px; border: 1px solid var(--electric-blue); z-index: 10;
+    }
+
+    .icon-btn {
+        width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border-glass);
+        background: var(--card-glass); color: white; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+    }
+
+    .pred-box { text-align: center; }
+    #predBox { font-family: 'Lora', serif; font-size: 4rem; color: var(--electric-blue); line-height: 1.2; }
+    
+    .conf-track { height: 8px; background: rgba(255,255,255,0.05); border-radius: 20px; margin: 12px 0; overflow: hidden; }
+    .conf-fill { height: 100%; width: 0%; background: var(--electric-blue); transition: 0.4s; }
+
+    .add-btn {
+        width: 100%; background: var(--electric-blue); color: var(--bg-dark);
+        padding: 14px; border-radius: 14px; border: none; font-weight: 800; cursor: pointer;
+    }
+
+    .word-area {
+        background: rgba(0,0,0,0.3); padding: 15px; border-radius: 16px; min-height: 50px;
+        font-family: 'Lora'; font-size: 1.4rem; color: var(--electric-blue); border: 1px solid var(--border-glass);
+    }
+
+    .btn-sec { flex: 1; padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer; border: 1px solid; font-size: 14px; }
+    .btn-clr { border-color: var(--danger); color: var(--danger); background: transparent; }
+    .btn-spk { border-color: var(--electric-blue); color: var(--electric-blue); background: var(--blue-glow); }
+
+    .ws-corner { position: absolute; top: 12px; left: 12px; background: var(--electric-blue); color: var(--bg-dark); padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 800; z-index: 10; display: none;}
+
+    footer { text-align: center; padding: 20px; font-size: 11px; color: var(--text-muted); opacity: 0.7; }
+
+    /* 📱 MOBILE RESPONSIVE LOGIC */
+    @media (max-width: 1024px) {
+        main {
+            grid-template-columns: 1fr; /* Switch to single column */
+            padding: 15px;
+        }
+        
+        .workspace-card {
+            height: 350px; /* Shorter for mobile screens */
         }
 
-        * { margin:0; padding:0; box-sizing:border-box; }
-
-        body {
-            font-family: 'Nunito', sans-serif;
-            background: var(--bg-dark);
-            background-image: radial-gradient(at 0% 0%, hsla(217,100%,12%,1) 0, transparent 50%), 
-                              radial-gradient(at 100% 100%, hsla(200,100%,10%,1) 0, transparent 50%);
-            min-height: 100vh;
-            color: var(--text-bright);
-            display: flex;
-            flex-direction: column;
+        #predBox {
+            font-size: 3.5rem;
         }
 
+        .logo-name {
+            font-size: 1.1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
         header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px 40px;
-            background: var(--card-glass);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-glass);
+            padding: 12px 15px;
         }
-
-        .logo-box { display: flex; align-items: center; gap: 12px; }
-        .logo-name { font-family: 'Lora', serif; font-size: 1.6rem; font-weight: 600; }
-        .logo-name span { color: var(--electric-blue); }
 
         .btn-ref {
-            background: var(--blue-glow);
-            border: 1px solid var(--electric-blue);
-            color: var(--electric-blue);
-            padding: 10px 22px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        main {
-            flex: 1;
-            display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 24px;
-            padding: 30px 40px;
-            max-width: 1500px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .glass-panel {
-            background: var(--card-glass);
-            border: 1px solid var(--border-glass);
-            border-radius: 28px;
-            padding: 24px;
-            backdrop-filter: blur(20px);
-        }
-
-        /* TOGGLE VIEW */
-        .source-toggle {
-            display: flex;
-            background: rgba(0,0,0,0.3);
-            padding: 6px;
-            border-radius: 16px;
-            margin-bottom: 18px;
-            border: 1px solid var(--border-glass);
+            padding: 6px 10px;
+            font-size: 10px;
         }
 
         .toggle-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            background: transparent;
-            color: var(--text-muted);
-            font-weight: 700;
-            cursor: pointer;
-            border-radius: 12px;
-            transition: 0.3s;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-size: 12px;
+            padding: 8px;
         }
 
-        .toggle-btn.active {
-            background: var(--electric-blue);
-            color: var(--bg-dark);
-            box-shadow: 0 4px 15px var(--blue-glow);
+        .glass-panel {
+            padding: 15px;
         }
-
-        /* WORKSPACE */
-        .workspace-card {
-            position: relative;
-            height: 480px;
-            background: #000;
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid var(--border-glass);
-        }
-
-        #webcam, #output_canvas, #image_canvas {
-            position: absolute; inset: 0;
-            width: 100%; height: 100%; object-fit: cover;
-        }
-
-        #placeholder {
-            position: absolute; inset: 0;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 5; background: var(--bg-dark);
-        }
-
-        #liveView, #uploadView { display: none; width: 100%; height: 100%; position: relative; }
-        #liveView.visible, #uploadView.visible { display: block; }
-
-        .drop-zone {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 100%; cursor: pointer; border: 2px dashed var(--border-glass); margin: 20px; border-radius: 20px;
-        }
-
-        /* FLOATING ACTION ICONS */
-        .floating-actions {
-            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-            display: none; gap: 12px; background: rgba(15, 23, 42, 0.9);
-            padding: 10px 20px; border-radius: 50px; border: 1px solid var(--electric-blue); z-index: 10;
-        }
-
-        .icon-btn {
-            width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border-glass);
-            background: var(--card-glass); color: white; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        /* PREDICTION PANEL */
-        .pred-box { text-align: center; }
-        #predBox { font-family: 'Lora', serif; font-size: 5.5rem; color: var(--electric-blue); line-height: 1.2; }
-        
-        .conf-track { height: 10px; background: rgba(255,255,255,0.05); border-radius: 20px; margin: 15px 0; overflow: hidden; }
-        .conf-fill { height: 100%; width: 0%; background: var(--electric-blue); transition: 0.4s; }
-
-        .add-btn {
-            width: 100%; background: var(--electric-blue); color: var(--bg-dark);
-            padding: 16px; border-radius: 16px; border: none; font-weight: 800; cursor: pointer;
-        }
-
-        .word-area {
-            background: rgba(0,0,0,0.3); padding: 18px; border-radius: 16px; min-height: 60px;
-            font-family: 'Lora'; font-size: 1.8rem; color: var(--electric-blue); border: 1px solid var(--border-glass);
-        }
-
-        .btn-sec { flex: 1; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; border: 1px solid; }
-        .btn-clr { border-color: var(--danger); color: var(--danger); background: transparent; }
-        .btn-spk { border-color: var(--electric-blue); color: var(--electric-blue); background: var(--blue-glow); }
-
-        .ws-corner { position: absolute; top: 15px; left: 15px; background: var(--electric-blue); color: var(--bg-dark); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; z-index: 10; display: none;}
-
-        footer { text-align: center; padding: 20px; font-size: 12px; color: var(--text-muted); opacity: 0.7; }
-    </style>
+    }
+</style>
 </head>
 <body>
 
