@@ -289,6 +289,9 @@
         uploadView.classList.toggle('visible', mode === 'upload');
         wsCorner.style.display = 'block';
         wsCorner.textContent = mode === 'live' ? '● LIVE' : '📁 PHOTO';
+        if (mode === 'upload') {
+            imageUpload.click();
+        }
         window.dispatchEvent(new CustomEvent('modeChange', { detail: mode }));
         if (mode === 'live') actionsBar.style.display = 'none';
     }
