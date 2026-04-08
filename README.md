@@ -1,12 +1,11 @@
-<h1 align="center">🤟 Voxasign </h1>
+<h1 align="center">🤟 VoxaSign — Gesture Studio</h1>
 <h3 align="center">AI-Powered Real-Time Sign Language → Text → Speech</h3>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.10-blue?style=for-the-badge&logo=python">
   <img src="https://img.shields.io/badge/TensorFlow.js-WebGL-orange?style=for-the-badge&logo=tensorflow">
   <img src="https://img.shields.io/badge/MediaPipe-Vision-green?style=for-the-badge&logo=google">
+  <img src="https://img.shields.io/badge/JavaScript-ES6-yellow?style=for-the-badge&logo=javascript">
   <img src="https://img.shields.io/badge/Edge--AI-Privacy--First-black?style=for-the-badge">
-  <img src="https://img.shields.io/badge/Deployment-Live--Ready-brightgreen?style=for-the-badge">
 </p>
 
 <p align="center">
@@ -14,15 +13,23 @@
   Real-time gesture translation directly in your browser — no servers, no latency.
 </p>
 
+---
+
 ## 📌 Project Overview
 
-**VoxaSign** is a high-performance **Gesture Studio SaaS Dashboard** built to empower the Deaf and Hard of Hearing (DHH) community.
+**VoxaSign** is a professional **AI Gesture Translation Studio** designed to empower the Deaf and Hard of Hearing (DHH) community.
 
-It evolved from a **Python-based deep learning model** into a **fully browser-based Edge-AI system**, delivering:
+It is a **fully browser-based Edge-AI system** that delivers:
 
-- ⚡ Real-time predictions  
-- 🔒 Complete privacy (on-device processing)  
+- ⚡ Real-time gesture recognition  
+- 🔒 Complete privacy (on-device inference)  
 - 🌐 Cross-platform accessibility  
+
+---
+
+## 🚀 Live Studio
+
+👉 https://voxasign.netlify.app/
 
 ---
 
@@ -30,117 +37,165 @@ It evolved from a **Python-based deep learning model** into a **fully browser-ba
 
 > 🌍 Over **70 million people** rely on sign language globally.
 
-Yet, communication barriers still exist in:
+Communication barriers still exist in:
 
 - 🏥 Healthcare  
 - 🎓 Education  
 - 🏦 Banking  
 
-💡 **VoxaSign solves this** with a **hardware-agnostic, browser-based AI translator**.
+💡 **VoxaSign solves this** with a **browser-based AI translator** that works on any device.
 
 ---
 
 ## ✨ Studio Features
 
-- 🎥 **Live Studio Mode** — Real-time gesture recognition  
-- 🖼️ **Photo Analysis Mode** — Upload & analyze static images  
-- 🔊 **Speech Engine** — Web Speech API integration  
-- 📊 **Session Analytics** — Confidence, counts, stats  
-- 🎨 **Premium UI** — Glassmorphism + Warm Paper Theme  
-- ⚡ **30+ FPS Performance** with WebGL acceleration  
+- 🎥 **Live Camera Mode** — Real-time hand gesture detection  
+- 🖼️ **Image Upload Mode** — Analyze static ASL images  
+- 🧠 **Neural Word Builder** — Convert letters into words  
+- 🔊 **Speech Engine** — Instant text-to-speech output  
+- 🎨 **Modern UI** — Glassmorphism + Midnight Blue theme  
+- ⚡ **Real-Time Performance** — Smooth inference using WebGL  
 
 ---
 
 ## 🧠 Technical Architecture
 
-### 🔄 Model Conversion (Python → Web)
+### 🔄 AI Pipeline
 
-- Trained using **TensorFlow / Keras**
-- Converted to **TensorFlow.js (JSON format)**
-
-**Pipeline:**
 ```
-Camera → Hand Tracking → Landmark Processing → DNN → Text → Speech
+Camera → MediaPipe → Landmark Extraction → Normalization → DNN → Text → Speech
 ```
 
 ---
 
-### 🌐 Edge-AI Deployment
+### ⚙️ Core Components
 
-- 🔒 **Privacy-First:** No cloud, no data sharing  
-- ⚡ **Zero Latency:** Runs entirely in-browser  
-- 📱 **Universal:** Desktop + Mobile optimized  
+- **Hand Tracking:** MediaPipe (21 landmarks, 63 coordinates)  
+- **Normalization:** Wrist-relative scaling  
+- **Model:** Dense Neural Network (TensorFlow.js)  
+- **Inference:** Real-time in-browser execution  
+
+---
+
+## 🌐 Edge-AI Deployment
+
+- 🔒 **Privacy-First:** No cloud, no data leaves device  
+- ⚡ **Low Latency:** Instant predictions  
+- 📱 **Cross-Platform:** Works on desktop & mobile  
 
 ---
 
 ## 📂 Project Structure
 
 ```
-VoxaSignAI/
-├── web_model/
+VoxaSign/
+├── model/
 │   ├── model.json
-│   └── group1-shard1of1.bin
+│   └── weights.bin
 ├── index.html
 ├── style.css
 ├── script.js
-├── realtime_sign.py
-├── train_signspeak.py
-└── label_map.npy
+└── assets/
 ```
 
 ---
 
-## 🚀 Quick Start (Web Studio)
+## 🚀 Quick Start
 
 ### 1️⃣ Clone Repository
 
 ```bash
-git clone https://github.com/Atiqumer/SignSpeakAI.git
+git clone https://github.com/Atiqumer/VoxaSign.git
 cd VoxaSign
 ```
 
-### 2️⃣ Run Locally
+---
 
-⚠️ Requires a local server (ES Modules)
+## 💻 Run Locally
 
-**Option 1 — VS Code**
-- Install **Live Server**
-- Click **Go Live**
+⚠️ Camera access requires a local server
 
-**Option 2 — Python Server**
-```bash
-python -m http.server 8000
-```
+### 🪟 Windows
 
-👉 Open: `http://localhost:8000`
+- Open project folder  
+- Use **VS Code Live Server** (Recommended)  
+OR  
+- Open `index.html` (limited functionality)
 
 ---
 
-## 💻 Python Backend (Training / Legacy)
+### 🍎 macOS
 
-| Step | Command |
-|------|--------|
-| Create venv | `python -m venv venv` |
-| Activate | `source venv/bin/activate` or `venv\Scripts\activate` |
-| Install deps | `pip install -r requirements.txt` |
-| Run | `python realtime_sign.py` |
+```bash
+python3 -m http.server 8000
+```
+
+👉 Open: http://localhost:8000  
+
+---
+
+### 🐧 Linux
+
+```bash
+python3 -m http.server 8000
+```
+
+👉 Open: http://localhost:8000  
+
+---
+
+## 📖 How It Works
+
+1. Select mode (Camera / Upload)  
+2. Show hand gesture  
+3. Model predicts ASL letter  
+4. Click **"Add to Word"**  
+5. Click **"Speak 🔊"** for audio  
 
 ---
 
 ## ⚙️ Core Engineering Highlights
 
-- 🎯 **Wrist-Relative Normalization** → Improves accuracy across distances  
-- 🔍 **Confidence Threshold (75%)** → Reduces jitter  
-- 🧠 **Efficient Memory Handling** → Prevents browser leaks (`tf.dispose`)  
-- ⚡ **GPU Acceleration (WebGL)** → Smooth real-time inference  
+- 🎯 Wrist-relative normalization → stable predictions  
+- 🔍 Confidence filtering → reduces noise  
+- 🧠 Efficient memory handling (`tf.dispose`)  
+- ⚡ GPU acceleration via WebGL  
+
+---
+
+## 📊 Dataset
+
+| Attribute | Details |
+|----------|--------|
+| Name     | Synthetic ASL Alphabet |
+| Classes  | 27 (A–Z + Space) |
+| Source   | Kaggle |
 
 ---
 
 ## 🛤️ Roadmap
 
-- [ ] 🧠 NLP-based sentence prediction  
-- [ ] 🔁 Two-way communication (Speech → Sign)  
+- [ ] 🧠 Sentence-level prediction (NLP)  
+- [ ] 🔁 Speech → Sign translation  
 - [ ] 📱 Progressive Web App (Offline Mode)  
 - [ ] 🌍 Multi-language support  
+
+---
+## 🌍 Vision
+
+> **"Bridging the Silence with AI"**
+
+VoxaSign aims to make communication **inclusive, real-time, and accessible for everyone.**
+
+---
+
+## ⭐ Support
+
+If you like this project:
+
+- ⭐ Star the repo  
+- 🍴 Fork it  
+- 🧠 Contribute  
+- 🐛 Report issues  
 
 ---
