@@ -3,456 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SignSpeak — Gesture Studio</title>
+    <title>Voxasign — Gesture Studio</title>
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.mjs" type="module"></script>
     <style>
         :root {
-            --cream:    #faf6f0;
-            --warm:     #f2ebe0;
-            --paper:    #fffdf9;
-            --sand:     #e8ddd0;
-            --mocha:    #8b6f5e;
-            --espresso: #4a3728;
-            --walnut:   #6b4f3a;
-            --sage:     #7a9e7e;
-            --blush:    #d4826a;
-            --gold:     #c9a84c;
-            --ink:      #2d1f14;
-            --muted:    #a08070;
-            --shadow:   rgba(74,55,40,0.12);
+            --bg-dark: #020617;
+            --card-glass: rgba(15, 23, 42, 0.8);
+            --electric-blue: #38bdf8;
+            --blue-glow: rgba(56, 189, 248, 0.2);
+            --text-bright: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --danger: #ef4444;
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
 
         body {
             font-family: 'Nunito', sans-serif;
-            background: var(--cream);
+            background: var(--bg-dark);
+            background-image: radial-gradient(at 0% 0%, hsla(217,100%,12%,1) 0, transparent 50%), 
+                              radial-gradient(at 100% 100%, hsla(200,100%,10%,1) 0, transparent 50%);
             min-height: 100vh;
-            color: var(--ink);
+            color: var(--text-bright);
             display: flex;
             flex-direction: column;
         }
 
-        /* ── HEADER ── */
         header {
-            position: relative;
-            z-index: 10;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 18px 36px;
-            background: var(--paper);
-            border-bottom: 1.5px solid var(--sand);
-            box-shadow: 0 2px 16px var(--shadow);
+            padding: 20px 40px;
+            background: var(--card-glass);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-glass);
         }
 
-        .logo { display: flex; align-items: center; gap: 12px; }
+        .logo-box { display: flex; align-items: center; gap: 12px; }
+        .logo-name { font-family: 'Lora', serif; font-size: 1.6rem; font-weight: 600; }
+        .logo-name span { color: var(--electric-blue); }
 
-        .logo-mark {
-            width: 40px; height: 40px;
-            background: var(--espresso);
+        .btn-ref {
+            background: var(--blue-glow);
+            border: 1px solid var(--electric-blue);
+            color: var(--electric-blue);
+            padding: 10px 22px;
             border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 4px 12px rgba(74,55,40,0.3);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
         }
 
-        .logo-name {
-            font-family: 'Lora', serif;
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--espresso);
-        }
-        .logo-name span { color: var(--blush); }
-        .logo-tagline { font-size: 11px; color: var(--muted); font-weight: 500; }
-
-        .status-pill {
-            display: flex; align-items: center; gap: 7px;
-            background: rgba(122,158,126,0.1);
-            border: 1.5px solid rgba(122,158,126,0.3);
-            color: var(--sage);
-            padding: 7px 16px;
-            border-radius: 99px;
-            font-size: 12px; font-weight: 600;
-        }
-
-        .status-dot {
-            width: 7px; height: 7px;
-            background: var(--sage); border-radius: 50%;
-            box-shadow: 0 0 6px var(--sage);
-            animation: breathe 2.5s ease-in-out infinite;
-        }
-
-        @keyframes breathe {
-            0%,100% { transform: scale(1); opacity: 0.8; }
-            50%      { transform: scale(1.3); opacity: 1; }
-        }
-
-        /* ── LAYOUT ── */
         main {
             flex: 1;
             display: grid;
-            grid-template-columns: 1fr 340px;
+            grid-template-columns: 1fr 380px;
             gap: 24px;
-            padding: 24px 36px;
-            max-width: 1280px;
+            padding: 30px 40px;
+            max-width: 1500px;
             margin: 0 auto;
             width: 100%;
         }
 
-        .card {
-            background: var(--paper);
-            border: 1.5px solid var(--sand);
-            border-radius: 22px;
-            box-shadow: 0 4px 20px var(--shadow);
+        .glass-panel {
+            background: var(--card-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 28px;
+            padding: 24px;
+            backdrop-filter: blur(20px);
         }
 
-        /* ── LEFT ── */
-        .left-col { display: flex; flex-direction: column; gap: 18px; }
-
-        .mode-picker { padding: 20px 22px; }
-
-        .picker-label {
-            font-size: 10px; font-weight: 700;
-            letter-spacing: 2px; text-transform: uppercase;
-            color: var(--muted); margin-bottom: 14px; display: block;
+        /* TOGGLE VIEW */
+        .source-toggle {
+            display: flex;
+            background: rgba(0,0,0,0.3);
+            padding: 6px;
+            border-radius: 16px;
+            margin-bottom: 18px;
+            border: 1px solid var(--border-glass);
         }
 
-        .mode-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-        .mode-tile {
+        .toggle-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 700;
             cursor: pointer;
-            border: 2px solid var(--sand);
-            border-radius: 18px;
-            padding: 18px 16px;
-            background: var(--warm);
-            transition: all 0.25s ease;
+            border-radius: 12px;
+            transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+
+        .toggle-btn.active {
+            background: var(--electric-blue);
+            color: var(--bg-dark);
+            box-shadow: 0 4px 15px var(--blue-glow);
+        }
+
+        /* WORKSPACE */
+        .workspace-card {
             position: relative;
-            user-select: none;
+            height: 480px;
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-glass);
         }
 
-        .mode-tile:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 6px 18px var(--shadow); }
-
-        .mode-tile.active {
-            border-color: var(--blush);
-            background: rgba(212,130,106,0.06);
-            box-shadow: 0 0 0 3px rgba(212,130,106,0.12), 0 6px 18px var(--shadow);
+        #webcam, #output_canvas, #image_canvas {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%; object-fit: cover;
         }
-
-        .tile-emoji { font-size: 26px; margin-bottom: 10px; display: block; }
-
-        .tile-title {
-            font-family: 'Lora', serif;
-            font-weight: 600; font-size: 0.95rem;
-            color: var(--espresso); margin-bottom: 4px;
-        }
-
-        .tile-desc { font-size: 0.72rem; color: var(--muted); line-height: 1.5; }
-
-        .tile-radio {
-            position: absolute; top: 12px; right: 12px;
-            width: 18px; height: 18px;
-            border-radius: 50%;
-            border: 2px solid var(--sand);
-            background: var(--paper);
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .mode-tile.active .tile-radio { background: var(--blush); border-color: var(--blush); }
-        .mode-tile.active .tile-radio::after {
-            content: ''; width: 7px; height: 7px;
-            background: white; border-radius: 50%;
-        }
-
-        /* Workspace */
-        .workspace-card { flex: 1; min-height: 380px; position: relative; overflow: hidden; }
 
         #placeholder {
             position: absolute; inset: 0;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center; gap: 12px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 5; background: var(--bg-dark);
         }
 
-        .ph-icon { font-size: 52px; opacity: 0.3; }
-
-        .ph-text {
-            font-family: 'Lora', serif; font-style: italic;
-            font-size: 0.95rem; color: var(--muted); text-align: center;
-        }
-
-        #liveView { position: absolute; inset: 0; display: none; }
-        #liveView.visible { display: block; }
-
-        #webcam, #output_canvas {
-            position: absolute; inset: 0;
-            width: 100%; height: 100%;
-            object-fit: cover; border-radius: 20px;
-        }
-
-        #output_canvas { pointer-events: none; }
-
-        #uploadView {
-            position: absolute; inset: 0;
-            display: none; align-items: center; justify-content: center;
-        }
-
-        #uploadView.visible { display: flex; }
+        #liveView, #uploadView { display: none; width: 100%; height: 100%; position: relative; }
+        #liveView.visible, #uploadView.visible { display: block; }
 
         .drop-zone {
-            width: calc(100% - 40px);
-            height: calc(100% - 40px);
-            border: 2.5px dashed var(--sand);
-            border-radius: 18px;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.3s;
-            background: var(--warm); gap: 10px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100%; cursor: pointer; border: 2px dashed var(--border-glass); margin: 20px; border-radius: 20px;
         }
 
-        .drop-zone:hover, .drop-zone.drag-over {
-            border-color: var(--gold);
-            background: rgba(201,168,76,0.05);
+        /* FLOATING ACTION ICONS */
+        .floating-actions {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            display: none; gap: 12px; background: rgba(15, 23, 42, 0.9);
+            padding: 10px 20px; border-radius: 50px; border: 1px solid var(--electric-blue); z-index: 10;
         }
 
-        .drop-icon { font-size: 34px; }
-        .drop-title { font-family: 'Lora', serif; font-size: 1rem; color: var(--espresso); }
-        .drop-sub { font-size: 0.75rem; color: var(--muted); }
-
-        .drop-btn-lbl {
-            margin-top: 4px;
-            background: var(--espresso); color: #fff;
-            padding: 8px 22px; border-radius: 99px;
-            font-size: 0.78rem; font-weight: 700; cursor: pointer;
-        }
-
-        #image_canvas {
-            position: absolute; inset: 0;
-            width: 100%; height: 100%;
-            object-fit: contain; display: none; border-radius: 20px;
-        }
-
-        .ws-corner {
-            position: absolute; top: 14px; left: 14px;
-            background: rgba(250,246,240,0.88);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--sand); border-radius: 99px;
-            padding: 4px 12px;
-            font-size: 10px; font-weight: 700;
-            color: var(--mocha); letter-spacing: 1px;
-            text-transform: uppercase; display: none; z-index: 10;
-        }
-
-        #clearCanvasBtn {
-            position: absolute; top: 14px; right: 14px;
-            width: 30px; height: 30px; border-radius: 50%;
-            background: rgba(250,246,240,0.9);
-            border: 1.5px solid var(--sand);
-            color: var(--blush); font-size: 13px;
-            cursor: pointer; display: none;
-            align-items: center; justify-content: center;
-            z-index: 10; transition: all 0.2s;
-            box-shadow: 0 2px 8px var(--shadow);
-        }
-
-        #clearCanvasBtn:hover { background: var(--blush); color: white; border-color: var(--blush); }
-
-        /* ── RIGHT ── */
-        .right-panel { display: flex; flex-direction: column; gap: 14px; }
-
-        .panel-card { padding: 18px 20px; }
-
-        .section-tag {
-            font-size: 10px; font-weight: 700;
-            letter-spacing: 2px; text-transform: uppercase;
-            color: var(--muted); margin-bottom: 12px; display: block;
-        }
-
-        .pred-bubble {
-            display: flex; align-items: center; gap: 14px;
-            background: var(--warm);
-            border: 1.5px solid var(--sand); border-radius: 16px;
-            padding: 14px 16px;
-        }
-
-        .pred-letter-box {
-            width: 58px; height: 58px; flex-shrink: 0;
-            background: var(--paper);
-            border: 2px solid var(--sand); border-radius: 13px;
+        .icon-btn {
+            width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border-glass);
+            background: var(--card-glass); color: white; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            font-family: 'Lora', serif; font-size: 1.9rem; font-weight: 600;
-            color: var(--muted);
-            box-shadow: inset 0 2px 6px var(--shadow);
-            transition: all 0.3s;
         }
 
-        .pred-letter-box.has-letter {
-            color: var(--blush); border-color: var(--blush);
-            box-shadow: 0 0 0 3px rgba(212,130,106,0.14), inset 0 2px 6px var(--shadow);
-        }
-
-        .pred-right { flex: 1; }
-        .pred-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
-
-        .conf-track {
-            height: 6px; background: var(--sand);
-            border-radius: 99px; overflow: hidden; margin-bottom: 5px;
-        }
-
-        .conf-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--gold), var(--blush));
-            border-radius: 99px; width: 0%;
-            transition: width 0.4s ease;
-        }
-
-        .conf-text { font-size: 11px; color: var(--muted); }
+        /* PREDICTION PANEL */
+        .pred-box { text-align: center; }
+        #predBox { font-family: 'Lora', serif; font-size: 5.5rem; color: var(--electric-blue); line-height: 1.2; }
+        
+        .conf-track { height: 10px; background: rgba(255,255,255,0.05); border-radius: 20px; margin: 15px 0; overflow: hidden; }
+        .conf-fill { height: 100%; width: 0%; background: var(--electric-blue); transition: 0.4s; }
 
         .add-btn {
-            width: 100%; padding: 13px;
-            background: var(--espresso); color: var(--cream);
-            font-family: 'Nunito', sans-serif; font-weight: 700;
-            font-size: 0.88rem; border: none; border-radius: 13px;
-            cursor: pointer; transition: all 0.2s; letter-spacing: 0.3px;
-            box-shadow: 0 4px 14px rgba(74,55,40,0.22);
+            width: 100%; background: var(--electric-blue); color: var(--bg-dark);
+            padding: 16px; border-radius: 16px; border: none; font-weight: 800; cursor: pointer;
         }
-
-        .add-btn:hover { background: var(--walnut); transform: translateY(-1px); }
-        .add-btn:active { transform: translateY(0); }
 
         .word-area {
-            background: var(--warm);
-            border: 1.5px solid var(--sand); border-radius: 14px;
-            padding: 14px; min-height: 60px;
-            font-family: 'Lora', serif; font-size: 1.5rem;
-            font-weight: 600; letter-spacing: 5px;
-            color: var(--espresso); word-break: break-all;
-            box-shadow: inset 0 2px 8px var(--shadow);
-            transition: all 0.3s;
+            background: rgba(0,0,0,0.3); padding: 18px; border-radius: 16px; min-height: 60px;
+            font-family: 'Lora'; font-size: 1.8rem; color: var(--electric-blue); border: 1px solid var(--border-glass);
         }
 
-        .word-area.empty {
-            font-family: 'Nunito', sans-serif; font-size: 0.85rem;
-            font-weight: 400; letter-spacing: 0.2px;
-            color: var(--muted); font-style: italic;
-        }
+        .btn-sec { flex: 1; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; border: 1px solid; }
+        .btn-clr { border-color: var(--danger); color: var(--danger); background: transparent; }
+        .btn-spk { border-color: var(--electric-blue); color: var(--electric-blue); background: var(--blue-glow); }
 
-        .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .ws-corner { position: absolute; top: 15px; left: 15px; background: var(--electric-blue); color: var(--bg-dark); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; z-index: 10; display: none;}
 
-        .btn-sec {
-            padding: 11px; border-radius: 11px;
-            font-family: 'Nunito', sans-serif; font-weight: 700;
-            font-size: 0.82rem; cursor: pointer;
-            transition: all 0.2s; border: 1.5px solid;
-        }
-
-        .btn-clr {
-            background: rgba(212,130,106,0.07);
-            color: var(--blush); border-color: rgba(212,130,106,0.28);
-        }
-
-        .btn-clr:hover { background: rgba(212,130,106,0.14); transform: translateY(-1px); }
-
-        .btn-spk {
-            background: rgba(122,158,126,0.08);
-            color: var(--sage); border-color: rgba(122,158,126,0.28);
-        }
-
-        .btn-spk:hover { background: rgba(122,158,126,0.16); transform: translateY(-1px); }
-
-        .stat-row { display: flex; gap: 8px; }
-
-        .stat-chip {
-            flex: 1; background: var(--warm);
-            border: 1.5px solid var(--sand); border-radius: 12px;
-            padding: 12px 8px; text-align: center;
-        }
-
-        .stat-num {
-            font-family: 'Lora', serif; font-size: 1.3rem;
-            font-weight: 600; color: var(--espresso);
-        }
-
-        .stat-lbl { font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: 0.5px; margin-top: 2px; }
-
-        .output-area {
-            background: var(--warm);
-            border: 1.5px solid var(--sand); border-radius: 14px;
-            padding: 13px 15px; font-size: 0.88rem;
-            color: var(--muted); font-style: italic;
-            min-height: 48px; line-height: 1.6;
-            box-shadow: inset 0 2px 6px var(--shadow); transition: all 0.3s;
-        }
-
-        .output-area.active {
-            color: var(--espresso); font-style: normal;
-            border-color: rgba(122,158,126,0.4);
-            background: rgba(122,158,126,0.05);
-        }
-
-        footer {
-            text-align: center; padding: 10px;
-            font-size: 11px; color: var(--muted);
-            border-top: 1px solid var(--sand);
-        }
-
-        footer span { color: var(--blush); }
-
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 99px; }
-
-        @media (max-width: 900px) {
-            main { grid-template-columns: 1fr; padding: 14px; }
-            header { padding: 14px 18px; }
-        }
+        footer { text-align: center; padding: 20px; font-size: 12px; color: var(--text-muted); opacity: 0.7; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">
-        <div class="logo-mark">🤟</div>
-        <div>
-            <div class="logo-name">Sign<span>Speak</span></div>
-            <div class="logo-tagline">Gesture Translation Studio</div>
-        </div>
+    <div class="logo-box">
+        <div class="logo-name">Voxa<span>sign</span></div>
     </div>
-    <div class="status-pill">
-        <div class="status-dot"></div>
-        Engine Ready
-    </div>
+    <button class="btn-ref" onclick="window.open('https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/American_Sign_Language_Alphabet.svg/1200px-American_Sign_Language_Alphabet.svg.png', '_blank')">📖 Alphabet Reference</button>
 </header>
 
 <main>
-    <div class="left-col">
-
-        <div class="card mode-picker">
-            <span class="picker-label">Choose input source</span>
-            <div class="mode-options">
-                <div class="mode-tile" id="liveTile">
-                    <div class="tile-radio"></div>
-                    <span class="tile-emoji">📷</span>
-                    <div class="tile-title">Live Webcam</div>
-                    <div class="tile-desc">Real-time detection from your camera</div>
-                </div>
-                <div class="mode-tile" id="uploadTile">
-                    <div class="tile-radio"></div>
-                    <span class="tile-emoji">🖼️</span>
-                    <div class="tile-title">Upload Photo</div>
-                    <div class="tile-desc">Analyze a still image of a hand sign</div>
-                </div>
-            </div>
+    <div style="display:flex; flex-direction:column; gap:20px;">
+        <div class="source-toggle">
+            <button class="toggle-btn" id="liveTile"><span>📷</span> Live Camera</button>
+            <button class="toggle-btn" id="uploadTile"><span>🖼️</span> Upload Photo</button>
         </div>
 
-        <div class="card workspace-card" style="flex:1; min-height:380px;">
-            <div class="ws-corner" id="wsCorner">Live</div>
-            <button id="clearCanvasBtn">✕</button>
-
+        <div class="glass-panel workspace-card">
+            <div class="ws-corner" id="wsCorner">LIVE</div>
+            
             <div id="placeholder">
-                <div class="ph-icon">✋</div>
-                <div class="ph-text">Pick an input source above<br>to start recognising signs</div>
+                <span style="font-size: 50px; margin-bottom: 10px;">👋</span>
+                <p style="color: var(--text-muted);">Select a source to start</p>
             </div>
 
             <div id="liveView">
@@ -462,92 +205,80 @@
 
             <div id="uploadView">
                 <label class="drop-zone" id="dropZone" for="imageUpload">
-                    <div class="drop-icon">📂</div>
-                    <div class="drop-title">Drop your image here</div>
-                    <div class="drop-sub">or click to browse files</div>
-                    <span class="drop-btn-lbl">Browse</span>
+                    <span style="font-size: 40px; margin-bottom: 10px;">📂</span>
+                    <p>Click to browse gesture image</p>
                     <input type="file" id="imageUpload" accept="image/*" hidden>
                 </label>
                 <canvas id="image_canvas"></canvas>
+                
+                <div class="floating-actions" id="uploadActionsBar">
+                    <button class="icon-btn" onclick="document.getElementById('imageUpload').click()">➕</button>
+                    <button class="icon-btn" id="clearCanvasBtn" style="color: var(--danger)">✕</button>
+                </div>
             </div>
         </div>
-
     </div>
 
-    <div class="right-panel">
+    <div style="display:flex; flex-direction:column; gap:20px;">
+        <div class="glass-panel pred-box">
+            <span style="font-size: 10px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase;">Inference</span>
+            <div id="predBox">–</div>
+            <div class="conf-track"><div class="conf-fill" id="confFill"></div></div>
+            <div id="confText" style="font-size: 12px; color: var(--text-muted);">Awaiting hand...</div>
+        </div>
 
-        <div class="card panel-card">
-            <span class="section-tag">Live prediction</span>
-            <div class="pred-bubble">
-                <div class="pred-letter-box" id="predBox">–</div>
-                <div class="pred-right">
-                    <div class="pred-label">Confidence level</div>
-                    <div class="conf-track"><div class="conf-fill" id="confFill"></div></div>
-                    <div class="conf-text" id="confText">No hand detected</div>
-                </div>
+        <div class="glass-panel">
+            <button class="add-btn" id="submitBtn">ADD TO WORD</button>
+            <div style="margin: 20px 0;">
+                <span style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Translation</span>
+                <div class="word-area empty" id="wordArea">Start signing…</div>
+            </div>
+            <div style="display:flex; gap:12px;">
+                <button class="btn-sec btn-clr" id="clearBtn">Clear</button>
+                <button class="btn-sec btn-spk" id="generateBtn">Speak 🔊</button>
             </div>
         </div>
 
-        <div class="card panel-card" style="padding: 16px 20px;">
-            <button class="add-btn" id="submitBtn">＋ &nbsp;Add Letter to Word</button>
-        </div>
-
-        <div class="card panel-card">
-            <span class="section-tag">Your word</span>
-            <div class="word-area empty" id="wordArea">Start signing…</div>
-        </div>
-
-        <div class="card panel-card" style="padding: 14px 20px;">
-            <div class="action-row">
-                <button class="btn-sec btn-clr" id="clearBtn">🗑 &nbsp;Clear</button>
-                <button class="btn-sec btn-spk" id="generateBtn">🔊 &nbsp;Speak</button>
-            </div>
-        </div>
-
-        <div class="card panel-card" style="padding: 14px 20px;">
-            <span class="section-tag">Session stats</span>
-            <div class="stat-row">
-                <div class="stat-chip">
-                    <div class="stat-num" id="statL">0</div>
-                    <div class="stat-lbl">Letters</div>
+        <div class="glass-panel" style="padding: 15px 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="text-align: center; flex:1;">
+                    <div id="statL" style="font-size: 1.2rem; font-weight: 700; color: var(--electric-blue);">0</div>
+                    <div style="font-size: 9px; color: var(--text-muted);">LETTERS</div>
                 </div>
-                <div class="stat-chip">
-                    <div class="stat-num" id="statW">0</div>
-                    <div class="stat-lbl">Words</div>
+                <div style="text-align: center; flex:1; border-left: 1px solid var(--border-glass); border-right: 1px solid var(--border-glass);">
+                    <div id="statW" style="font-size: 1.2rem; font-weight: 700; color: var(--electric-blue);">0</div>
+                    <div style="font-size: 9px; color: var(--text-muted);">WORDS</div>
                 </div>
-                <div class="stat-chip">
-                    <div class="stat-num" id="statC">—</div>
-                    <div class="stat-lbl">Accuracy</div>
+                <div style="text-align: center; flex:1;">
+                    <div id="statC" style="font-size: 1.2rem; font-weight: 700; color: var(--electric-blue);">—</div>
+                    <div style="font-size: 9px; color: var(--text-muted);">ACCURACY</div>
                 </div>
             </div>
         </div>
-
-        <div class="card panel-card">
-            <span class="section-tag">Spoken output</span>
-            <div class="output-area" id="outputArea">Your translation will appear here…</div>
-        </div>
-
+        
+        <div id="outputArea" style="display:none;"></div>
     </div>
 </main>
 
-<footer>Made with <span>♥</span> for accessibility — SignSpeak Studio</footer>
+<footer>Voxasign — AI Gesture Studio</footer>
 
 <script src="script.js" type="module"></script>
 <script>
-    const liveTile    = document.getElementById('liveTile');
-    const uploadTile  = document.getElementById('uploadTile');
-    const liveView    = document.getElementById('liveView');
-    const uploadView  = document.getElementById('uploadView');
+    const liveTile = document.getElementById('liveTile');
+    const uploadTile = document.getElementById('uploadTile');
+    const liveView = document.getElementById('liveView');
+    const uploadView = document.getElementById('uploadView');
     const placeholder = document.getElementById('placeholder');
-    const wsCorner    = document.getElementById('wsCorner');
-    const clearBtn2   = document.getElementById('clearCanvasBtn');
+    const wsCorner = document.getElementById('wsCorner');
+    const clearBtn2 = document.getElementById('clearCanvasBtn');
     const imageUpload = document.getElementById('imageUpload');
     const imageCanvas = document.getElementById('image_canvas');
-    const dropZone    = document.getElementById('dropZone');
+    const dropZone = document.getElementById('dropZone');
+    const actionsBar = document.getElementById('uploadActionsBar');
 
     let activeMode = null;
     let letterCount = 0, wordCount = 0;
-    let wordBuffer = ''; // source of truth — never read from DOM for speech
+    let wordBuffer = '';
 
     function setMode(mode) {
         activeMode = mode;
@@ -557,29 +288,27 @@
         liveView.classList.toggle('visible', mode === 'live');
         uploadView.classList.toggle('visible', mode === 'upload');
         wsCorner.style.display = 'block';
-        wsCorner.textContent = mode === 'live' ? '● Live' : '📁 Photo';
+        wsCorner.textContent = mode === 'live' ? '● LIVE' : '📁 PHOTO';
         window.dispatchEvent(new CustomEvent('modeChange', { detail: mode }));
-        if (mode === 'live') clearBtn2.style.display = 'none';
+        if (mode === 'live') actionsBar.style.display = 'none';
     }
 
     liveTile.addEventListener('click', () => { if (activeMode !== 'live') setMode('live'); });
     uploadTile.addEventListener('click', () => { if (activeMode !== 'upload') setMode('upload'); });
 
     window.updatePrediction = function(letter, confidence) {
-        const box  = document.getElementById('predBox');
+        const box = document.getElementById('predBox');
         const fill = document.getElementById('confFill');
-        const txt  = document.getElementById('confText');
-        const cs   = document.getElementById('statC');
+        const txt = document.getElementById('confText');
+        const cs = document.getElementById('statC');
         if (letter && letter !== '---') {
             box.textContent = letter;
-            box.classList.add('has-letter');
             const pct = Math.round(confidence * 100);
             fill.style.width = pct + '%';
             txt.textContent = pct + '% confidence';
             cs.textContent = pct + '%';
         } else {
             box.textContent = '–';
-            box.classList.remove('has-letter');
             fill.style.width = '0%';
             txt.textContent = 'No hand detected';
             cs.textContent = '—';
@@ -590,7 +319,7 @@
         wordBuffer = word;
         const wa = document.getElementById('wordArea');
         if (word) { wa.textContent = word; wa.classList.remove('empty'); }
-        else       { wa.textContent = 'Start signing…'; wa.classList.add('empty'); }
+        else { wa.textContent = 'Start signing…'; wa.classList.add('empty'); }
     }
 
     document.getElementById('submitBtn').addEventListener('click', () => {
@@ -606,24 +335,16 @@
         document.getElementById('statL').textContent = 0;
         document.getElementById('statW').textContent = 0;
         document.getElementById('statC').textContent = '—';
-        const oa = document.getElementById('outputArea');
-        oa.textContent = 'Your translation will appear here…';
-        oa.classList.remove('active');
         window.updatePrediction('', 0);
         if (window.clearCurrentPrediction) window.clearCurrentPrediction();
     });
 
     document.getElementById('generateBtn').addEventListener('click', () => {
         if (!wordBuffer) return;
-        const oa = document.getElementById('outputArea');
-        oa.textContent = '"' + wordBuffer + '"';
-        oa.classList.add('active');
         wordCount++;
         document.getElementById('statW').textContent = wordCount;
-        // Lowercase forces TTS to pronounce as a whole word, not spell A-B-C
         const utterance = new SpeechSynthesisUtterance(wordBuffer.toLowerCase());
         utterance.lang = 'en-US';
-        utterance.rate = 0.95;
         window.speechSynthesis.cancel();
         window.speechSynthesis.speak(utterance);
     });
@@ -632,7 +353,7 @@
         imageUpload.value = '';
         imageCanvas.style.display = 'none';
         dropZone.style.display = 'flex';
-        clearBtn2.style.display = 'none';
+        actionsBar.style.display = 'none';
         window.updatePrediction('', 0);
         if (window.clearCurrentPrediction) window.clearCurrentPrediction();
     });
@@ -646,15 +367,8 @@
             imageCanvas.getContext('2d').drawImage(img, 0, 0);
             dropZone.style.display = 'none';
             imageCanvas.style.display = 'block';
-            clearBtn2.style.display = 'flex';
+            actionsBar.style.display = 'flex';
         };
-    });
-
-    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault(); dropZone.classList.remove('drag-over');
-        if (e.dataTransfer.files[0]) { imageUpload.files = e.dataTransfer.files; imageUpload.dispatchEvent(new Event('change')); }
     });
 </script>
 </body>
